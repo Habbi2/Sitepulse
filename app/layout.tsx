@@ -4,7 +4,12 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'SitePulse – Instant Website Quality Score',
-  description: 'Fast multi-pillar audits: performance, accessibility, SEO, security, UX.'
+  description: 'Fast multi-pillar audits: performance, accessibility, SEO, security, UX.',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg'
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
