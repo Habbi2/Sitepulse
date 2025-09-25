@@ -13,6 +13,7 @@ Fast multi‑pillar website quality snapshot (Performance • Accessibility • 
 * Basic in‑memory rate limiting (token bucket) to curb abuse
 * Heartbeat ambient theme (subtle background, gauge glow, bar and card pulses; auto-disabled for users with `prefers-reduced-motion: reduce`)
 * Improved issue list UX (progressive reveal, severity accent borders, accessible focus states)
+* Vector favicon / brand mark (`app/icon.svg`) referenced via Next.js metadata `icons`; single scalable SVG drives all sizes
 
 ## 🧱 Tech Stack
 * Next.js 14 App Router (TypeScript, ESM)
@@ -144,6 +145,7 @@ interface Report {
 4. Mixed content detection is static (server HTML only); client‑injected resources won’t be seen.
 5. Baseline security headers (CSP, Permissions-Policy, Referrer-Policy, X-Frame-Options) are set in `middleware.ts`. Adjust CSP directives if you add external scripts/images/fonts.
 6. If memory pressure occurs on serverless, optionally set: `NODE_OPTIONS=--max_old_space_size=512`.
+7. Branding / favicon: Replace `app/icon.svg` with your own SVG (square viewBox). If you need additional raster sizes (e.g. 192x192, 512x512) or mask icons, extend the `metadata` `icons` field in `app/layout.tsx`.
 
 ## 🔮 Future Enhancements
 * External resource weight probing (HEAD requests)
