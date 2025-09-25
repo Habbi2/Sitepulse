@@ -4,6 +4,15 @@
 
 body { @apply bg-neutral-950 text-neutral-100 antialiased; }
 
+/* Custom font face example with font-display swap to avoid FOIT */
+@font-face {
+	font-family: 'InterVar';
+	src: local('Inter'), local('Inter-Regular'); /* falls back to system if not bundled */
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
 /* Heartbeat Theme */
 @keyframes heartbeat-bg {
 	0%, 100% { background-color: rgb(12 12 12); }

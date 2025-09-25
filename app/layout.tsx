@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'SitePulse – Instant Website Quality Score',
-  description: 'Fast multi-pillar audits: performance, accessibility, SEO, security, UX.',
+  description: 'Fast multi-pillar web quality audits delivering actionable performance, accessibility, SEO, security and UX insights in under a second.',
   icons: {
     icon: '/icon.svg',
     shortcut: '/icon.svg',

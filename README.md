@@ -14,6 +14,7 @@ Fast multi‑pillar website quality snapshot (Performance • Accessibility • 
 * Heartbeat ambient theme (subtle background, gauge glow, bar and card pulses; auto-disabled for users with `prefers-reduced-motion: reduce`)
 * Improved issue list UX (progressive reveal, severity accent borders, accessible focus states)
 * Vector favicon / brand mark (`app/icon.svg`) referenced via Next.js metadata `icons`; single scalable SVG drives all sizes
+* Optimization issue tier: soft (low severity) issues now surface for non-critical deductions (e.g., moderate TTFB, suboptimal title length, high JS weight) so every score drop is explainable
 
 ## 🧱 Tech Stack
 * Next.js 14 App Router (TypeScript, ESM)
