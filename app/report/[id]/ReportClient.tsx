@@ -45,6 +45,10 @@ export function ReportClient({ id, prevId }: { id: string; prevId?: string }) {
         <ShareBlock id={report.id} />
       </div>
       <div className="md:col-span-2 flex flex-col gap-6">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight mb-1">{report.pageTitle}</h2>
+          <p className="text-[11px] text-neutral-500 break-all">{report.url}</p>
+        </div>
         <h2 className="text-sm uppercase tracking-wide text-neutral-400 flex items-center gap-3">Top Issues {issueDiff && <IssueDiffSummary diff={issueDiff} />}</h2>
         {issueDiff && <IssueChangeList diff={issueDiff} />}
         <IssueList issues={report.issues as Issue[] } />

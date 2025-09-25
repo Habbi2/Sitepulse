@@ -30,10 +30,14 @@ export async function runAuditFast(rawUrl: string, opts: RunAuditOptions = {}): 
   const metrics = aggregateMetrics(parsed, fetchRes);
   const { scores, overall } = computeScores(metrics);
   const issues = deriveIssues({ metrics, scores });
+  const pageTitle = parsed.pageTitle && parsed.pageTitle.length > 0
+    ? parsed.pageTitle
+    : new URL(url).hostname.replace(/^www\./, '');
   const report: Report = {
     id: randomUUID(),
     version: 1,
     url,
+    pageTitle,
     fetchedAt: new Date().toISOString(),
     overall,
     scores: scores as any,

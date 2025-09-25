@@ -12,6 +12,7 @@ interface WalkContext {
   landmarks: number; // count of landmark element occurrences
   metaDescriptionChars: number;
   titleChars: number;
+  pageTitle?: string;
   hasCanonical: boolean;
   h1Exists: boolean;
   hasViewport: boolean;
@@ -82,7 +83,10 @@ export function extractMetrics(html: string, pageUrl: string): RawMetrics {
       // title
       if (tag === 'title' && node.childNodes) {
         const text = node.childNodes.map((c: any) => c.value || '').join('').trim();
-        if (text) ctx.titleChars = text.length;
+        if (text) {
+          ctx.titleChars = text.length;
+          ctx.pageTitle = text;
+        }
       }
       // meta elements
       if (tag === 'meta') {
@@ -216,7 +220,8 @@ export function extractMetrics(html: string, pageUrl: string): RawMetrics {
       hasFavicon: ctx.hasFavicon,
       fontDisplayPercent,
       jsWeightKb: ctx.inlineScriptBytes / 1024
-    }
+    },
+    pageTitle: ctx.pageTitle
   };
 
   return metrics;

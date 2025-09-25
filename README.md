@@ -102,6 +102,7 @@ Returns a cached report if still within TTL; otherwise 404 error.
 interface Report {
   id: string;
   url: string;
+  pageTitle: string; // extracted <title> text or hostname fallback
   fetchedAt: string; // ISO timestamp
   overall: number;   // 0–100 weighted composite
   scores: {
