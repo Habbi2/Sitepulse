@@ -142,7 +142,7 @@ interface Report {
 2. In‑memory cache + rate limiting are single instance only—use Redis / KV for multi‑region or scale.
 3. Security scoring baseline: HTTPS yields a floor value; tweak constants in `compute-scores.ts`.
 4. Mixed content detection is static (server HTML only); client‑injected resources won’t be seen.
-5. Consider adding headers (CSP, Permissions‑Policy, Referrer‑Policy, X-Frame-Options) on your hosting platform.
+5. Baseline security headers (CSP, Permissions-Policy, Referrer-Policy, X-Frame-Options) are set in `middleware.ts`. Adjust CSP directives if you add external scripts/images/fonts.
 6. If memory pressure occurs on serverless, optionally set: `NODE_OPTIONS=--max_old_space_size=512`.
 
 ## 🔮 Future Enhancements
