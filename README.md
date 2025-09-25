@@ -11,6 +11,8 @@ Fast multi‑pillar website quality snapshot (Performance • Accessibility • 
 * Diff view (added / resolved / unchanged issues + per‑pillar deltas)
 * Shareable ephemeral reports (in‑memory cache ~10 minutes)
 * Basic in‑memory rate limiting (token bucket) to curb abuse
+* Heartbeat ambient theme (subtle background, gauge glow, bar and card pulses; auto-disabled for users with `prefers-reduced-motion: reduce`)
+* Improved issue list UX (progressive reveal, severity accent borders, accessible focus states)
 
 ## 🧱 Tech Stack
 * Next.js 14 App Router (TypeScript, ESM)
@@ -64,6 +66,16 @@ Why this approach:
 * Easy to migrate later—tests are plain TypeScript modules
 
 Possible future upgrade: switch to a fuller runner if we need watch mode, parallel isolation, or snapshot features; current approach keeps iteration instant.
+
+## 🎨 Heartbeat Theme
+Implemented via custom keyframes in `globals.css`:
+* `hb-bg` – slow ambient background luminosity shift
+* `hb-scale` – gentle scale pulse on the main gauge
+* `hb-glow` – cyclical outward glow ring effect
+* `hb-border` / `hb-card` – soft pulsing border + radial hover glow on issue cards
+* `hb-text` – breathing opacity for numeric readouts
+
+Accessibility: All animations are disabled automatically for `prefers-reduced-motion: reduce` to respect user preferences.
 
 ## 🧩 Architecture Overview
 Flow for an audit request:
