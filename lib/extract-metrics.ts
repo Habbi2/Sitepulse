@@ -178,6 +178,9 @@ export function extractMetrics(html: string, pageUrl: string): RawMetrics {
   let fontDisplayPercent = 0;
   if (ctx.fontDisplayTotal > 0) {
     fontDisplayPercent = (ctx.fontDisplayHits / ctx.fontDisplayTotal) * 100;
+  } else {
+    // No custom font-face rules encountered => nothing can block rendering; treat as fully covered
+    fontDisplayPercent = 100;
   }
 
   // Basic request counts (HTML + resource tags), refined in later phases when we fetch assets.

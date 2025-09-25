@@ -134,7 +134,7 @@ const rules: Rule[] = [
   },
   {
     id: 'no-font-display',
-    test: ({ metrics }) => metrics.ux.fontDisplayPercent === 0 && metrics.ux.jsWeightKb < 15_000, // avoid false zero when no fonts
+    test: ({ metrics }) => metrics.ux.fontDisplayPercent === 0, // after metrics patch, 0 only when font-face blocks exist without display
     build: ({ scores }) => ({
       id: 'no-font-display',
       category: 'ux',
