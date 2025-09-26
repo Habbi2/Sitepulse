@@ -24,7 +24,7 @@ export default function LandingPage() {
         </ul>
         <p className="mt-4">Every issue surfaced ties to an actual deduction, including low‑severity optimization hints—no unexplained score drops. Diffing lets you validate incremental fixes without waiting on a full headless crawl.</p>
         <p className="mt-4">Planned enhancements include external resource weight probes, an optional JS render phase, and historical trend storage. For CSP generation and stricter security baselining see the companion <span className="text-sky-400">AutoCSP</span> tool.</p>
-        <p className="mt-4 text-neutral-500 text-xs">Design collaboration & aesthetic inspiration by <a href="https://habbiwebdesign.com" className="underline decoration-sky-500/50 hover:decoration-sky-400" target="_blank" rel="noopener noreferrer">Habbi Web Design</a>.</p>
+        <p className="mt-4 text-neutral-500 text-xs">Design collaboration & aesthetic inspiration by <a href="https://www.habbiwebdesign.site/" className="underline decoration-sky-500/50 hover:decoration-sky-400" target="_blank" rel="noopener noreferrer">Habbi Web Design</a>.</p>
       </section>
     </main>
   );
