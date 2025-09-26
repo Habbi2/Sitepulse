@@ -1,180 +1,202 @@
+<div align="center">
+
 # SitePulse
 
-Fast multi‑pillar website quality snapshot (Performance • Accessibility • SEO • Security • UX).
+Fast, explainable multi‑pillar website quality snapshots (Performance • Accessibility • SEO • Security • UX) in a single request.
 
-## ✨ Features (MVP)
-* URL normalization & safety checks (blocks local / private / non‑HTTP(S) schemes)
-* Fast HTML fetch with TTFB timing, 2MB response size cap, typed error codes
-* Structural + qualitative metric extraction (headings, meta tags, alt coverage, font-display, mixed content, security headers, UX signals)
-* Pillar scoring + composite overall score (weighted)
-* Rule‑based issue engine with estimated score gain per issue
-* Diff view (added / resolved / unchanged issues + per‑pillar deltas)
-* Shareable ephemeral reports (in‑memory cache ~10 minutes)
-* Basic in‑memory rate limiting (token bucket) to curb abuse
-* Heartbeat ambient theme (subtle background, gauge glow, bar and card pulses; auto-disabled for users with `prefers-reduced-motion: reduce`)
-* Improved issue list UX (progressive reveal, severity accent borders, accessible focus states)
-* Vector favicon / brand mark (`app/icon.svg`) referenced via Next.js metadata `icons`; single scalable SVG drives all sizes
-* Optimization issue tier: soft (low severity) issues now surface for non-critical deductions (e.g., moderate TTFB, suboptimal title length, high JS weight) so every score drop is explainable
+![Score Gauge](./app/icon.svg)
 
-## 🧱 Tech Stack
-* Next.js 14 App Router (TypeScript, ESM)
-* React 18, Tailwind CSS
-* `parse5` for HTML parsing
-* Lightweight custom test harness (TypeScript + `tsx` + Node `assert`)
-* (Planned) `zod` schema hardening for external inputs
+</div>
 
-## 🚀 Getting Started
+## Table of Contents
+1. Overview
+2. Why Another Auditor?
+3. Feature Matrix
+4. Quick Start
+5. Scoring Model
+6. Architecture Flow
+7. Data & Report Schema
+8. API Reference
+9. Testing & Coverage
+10. Deployment Notes
+11. Roadmap
+12. Troubleshooting
+13. Contributing
+14. Credits
+15. License
+
+## 1. Overview
+SitePulse produces a concise, weighted score profile across five pillars and surfaces only the issues that actually influenced the numbers—making every deduction explainable. All logic executes server‑side against the raw HTML (fast mode). No persistence beyond a short in‑memory TTL cache.
+
+## 2. Why Another Auditor?
+Traditional tools are either: (a) heavyweight & slow (headless browsers, multi‑pass), or (b) simplistic lists without context. SitePulse focuses on: instantaneous feedback (< ~1s typical), transparent scoring inputs, diff‑friendly output, and a minimal, dark, accessible UI with subtle heartbeat animations (disabled for reduced‑motion users).
+
+## 3. Feature Matrix (MVP)
+Core:
+- URL normalization & safety guardrails (blocks local/private/invalid schemes)
+- HTML fetch with TTFB capture, size & content‑type enforcement (2 MB cap)
+- Structured metric extraction (headings, meta, links, alt %, font-display, security headers, canonical, robots, language, viewport, mixed content)
+- Weighted pillar scoring + composite overall
+- Rule engine with estimated remediation gain per issue
+- Diff view (added / resolved / unchanged issues + per‑pillar deltas)
+- Ephemeral cached reports (~10 min TTL)
+- Token bucket rate limiting (in‑memory)
+- Soft optimization tier (low severity signals so every score delta has a label)
+- Vector brand icon `app/icon.svg`
+
+UX / Visual:
+- Heartbeat ambient theme (bg, gauge, glow, border, card, text breathing)
+- Progressive issue reveal & severity accents
+- Focus-visible + reduced-motion accessibility compliance
+
+Integration / Ecosystem:
+- Companion CSP generator (AutoCSP) for security hardening (separate package)
+
+## 4. Quick Start
 ```bash
+git clone <repo-url>
+cd sitepulse
 npm install
 npm run dev
 ```
-Then open: http://localhost:3000
+Visit: http://localhost:3000
 
-## 🧪 Testing (Lightweight Harness)
-We intentionally removed heavier runners (Vitest/Jest) after environment instability and replaced them with a zero‑overhead approach.
+Run an audit from the landing form or call the API directly:
+```bash
+curl -X POST http://localhost:3000/api/audit -H "Content-Type: application/json" -d '{"url":"https://example.com"}'
+```
 
-How it works now:
-* Each file in `tests/*.test.ts` uses Node's built‑in `assert`.
-* `tests/run-all.ts` dynamically discovers and imports all `*.test.ts` files (no manual list maintenance).
-* `npm test` executes the harness via `tsx`.
+## 5. Scoring Model
+Each pillar starts at 100 and deductions are applied per rule. Overall score is a weighted mean (defaults):
+```
+performance  : 0.22
+accessibility: 0.20
+seo          : 0.18
+security     : 0.25
+ux           : 0.15
+```
+Weights live alongside constants in `lib/compute-scores.ts` and can be tuned. Rules carry a max deduction; optimization (soft) issues cap at small values so they never dominate real defects. Security has a baseline floor uplift when HTTPS & core headers are present.
 
-Coverage:
-* Run `npm run coverage` (uses `c8`) to produce text + HTML + lcov reports (`coverage/` directory).
-* Clean coverage output: `npm run coverage:clean`.
-
-Add a new test:
+### Issue Object (simplified)
 ```ts
-// tests/new-feature.test.ts
-import assert from 'node:assert';
-import { computePillarDeltas } from '../lib/diff';
-
-assert.deepStrictEqual(
-  computePillarDeltas({ performance: 50, accessibility: 60, seo: 70, security: 80, ux: 90 },
-                      { performance: 40, accessibility: 55, seo: 70, security: 70, ux: 95 }),
-  {
-    performance: { previous: 40, current: 50, delta: 10 },
-    accessibility: { previous: 55, current: 60, delta: 5 },
-    seo: { previous: 70, current: 70, delta: 0 },
-    security: { previous: 70, current: 80, delta: 10 },
-    ux: { previous: 95, current: 90, delta: -5 }
-  }
-);
-```
-No registration step required—just ensure the filename ends with `.test.ts`; the harness will pick it up automatically.
-
-Why this approach:
-* Near‑zero cold start & cognitive overhead
-* No mocking layer required yet
-* Easy to migrate later—tests are plain TypeScript modules
-
-Possible future upgrade: switch to a fuller runner if we need watch mode, parallel isolation, or snapshot features; current approach keeps iteration instant.
-
-## 🎨 Heartbeat Theme
-Implemented via custom keyframes in `globals.css`:
-* `hb-bg` – slow ambient background luminosity shift
-* `hb-scale` – gentle scale pulse on the main gauge
-* `hb-glow` – cyclical outward glow ring effect
-* `hb-border` / `hb-card` – soft pulsing border + radial hover glow on issue cards
-* `hb-text` – breathing opacity for numeric readouts
-
-Accessibility: All animations are disabled automatically for `prefers-reduced-motion: reduce` to respect user preferences.
-
-## 🧩 Architecture Overview
-Flow for an audit request:
-1. Normalize & validate URL (reject private / loopback / unsupported schemes)
-2. Rate limit check (`lib/rate-limit.ts`)
-3. Fetch HTML (`lib/fetch-html.ts`) with timing + size guard + content‑type sniff
-4. Parse & extract raw metrics (`lib/extract-metrics.ts`)
-5. Aggregate / normalize metrics (`lib/aggregate-metrics.ts`)
-6. Compute pillar & overall scores with security baselines (`lib/compute-scores.ts`)
-7. Derive issues (`lib/derive-issues.ts`)
-8. Cache report (in‑memory TTL) & optionally diff against `previousId` (`lib/diff.ts`)
-9. Return JSON payload to the client UI
-
-All data is ephemeral; no persistence beyond the short cache TTL.
-
-## 📡 API
-### POST `/api/audit`
-Request body:
-```json
-{ "url": "https://example.com", "previousId": "optional-report-id" }
-```
-Response:
-```json
-{ "id": "...", "overall": 78, "scores": { "performance": 64, ... }, "issues": [ ... ] }
-```
-Errors take the shape:
-```json
-{ "error": { "code": "TIMEOUT", "message": "Fetch exceeded limit", "hint": "Try a smaller page" } }
+interface Issue {
+  id: string;              // stable identifier
+  pillar: 'performance'|'accessibility'|'seo'|'security'|'ux';
+  severity: 'low'|'medium'|'high';
+  message: string;         // human readable summary
+  impact: number;          // deduction applied (or potential gain if resolved)
+  hints?: string[];        // optional remediation suggestions
+}
 ```
 
-### GET `/api/report/[id]`
-Returns a cached report if still within TTL; otherwise 404 error.
+## 6. Architecture Flow
+```text
+Client → /api/audit
+ 1. normalize url         (lib/normalize.ts or inline logic)
+ 2. rate limit            (lib/rate-limit.ts)
+ 3. fetch HTML            (lib/fetch-html.ts)
+ 4. extract raw metrics   (lib/extract-metrics.ts)
+ 5. aggregate/normalize   (lib/aggregate-metrics.ts)
+ 6. compute scores        (lib/compute-scores.ts)
+ 7. derive issues         (lib/derive-issues.ts)
+ 8. diff (optional)       (lib/diff.ts)
+ 9. cache + respond       (in-memory store)
+```
+All stateless; swap cache + rate limit layers for Redis/KV to scale horizontally.
 
-## 🧾 Report Object (abbrev)
+## 7. Data & Report Schema (Abbrev)
 ```ts
 interface Report {
   id: string;
   url: string;
-  pageTitle: string; // extracted <title> text or hostname fallback
-  fetchedAt: string; // ISO timestamp
-  overall: number;   // 0–100 weighted composite
-  scores: {
-    performance: number;
-    accessibility: number;
-    seo: number;
-    security: number;
-    ux: number;
-  };
+  pageTitle: string;
+  fetchedAt: string;
+  overall: number;
+  scores: Record<'performance'|'accessibility'|'seo'|'security'|'ux', number>;
   issues: Issue[];
-  previousId?: string; // if diff requested
+  previousId?: string;
   diff?: {
     scores: Record<string, { previous: number; current: number; delta: number }>;
-    issues: {
-      added: Issue[];
-      resolved: Issue[];
-      unchanged: Issue[];
-    }
-  };
+    issues: { added: Issue[]; resolved: Issue[]; unchanged: Issue[] };
+  }
 }
 ```
 
-## ⚙️ Deployment Notes
-1. Replace placeholder reporting domain / user agent string in `fetch-html.ts` if customizing.
-2. In‑memory cache + rate limiting are single instance only—use Redis / KV for multi‑region or scale.
-3. Security scoring baseline: HTTPS yields a floor value; tweak constants in `compute-scores.ts`.
-4. Mixed content detection is static (server HTML only); client‑injected resources won’t be seen.
-5. Baseline security headers (CSP, Permissions-Policy, Referrer-Policy, X-Frame-Options) are set in `middleware.ts`. Adjust CSP directives if you add external scripts/images/fonts.
-6. If memory pressure occurs on serverless, optionally set: `NODE_OPTIONS=--max_old_space_size=512`.
-7. Branding / favicon: Replace `app/icon.svg` with your own SVG (square viewBox). If you need additional raster sizes (e.g. 192x192, 512x512) or mask icons, extend the `metadata` `icons` field in `app/layout.tsx`.
+## 8. API Reference
+### POST /api/audit
+Request:
+```json
+{ "url": "https://example.com", "previousId": "optional-report-id" }
+```
+Success:
+```json
+{ "id": "...", "overall": 78, "scores": { "performance": 64, "accessibility": 60, "seo": 70, "security": 80, "ux": 75 }, "issues": [ { "id": "ttl-short", "pillar": "seo", "severity": "low", "impact": 2, "message": "Title length could be improved" } ] }
+```
+Errors:
+```json
+{ "error": { "code": "TIMEOUT", "message": "Fetch exceeded limit", "hint": "Try a smaller page" } }
+```
 
-## 🔮 Future Enhancements
-* External resource weight probing (HEAD requests)
-* Headless render phase for SPA / late DOM metrics
-* Persistent storage + auth (historical trend lines)
-* Expanded security heuristics (HSTS, SRI, cookie flags)
-* Smarter issue grouping / remediation hints
-* Optional Lighthouse integration (hybrid scoring)
+### GET /api/report/[id]
+Response (404 if expired): cached `Report` JSON.
 
-## 🛠 Troubleshooting
+## 9. Testing & Coverage
+Lightweight harness (no Jest/Vitest) for speed:
+- `tests/*.test.ts` use Node `assert`
+- `tests/run-all.ts` auto-discovers
+- `npm test` runs via `tsx`
+
+Coverage:
+```bash
+npm run coverage      # HTML + text + lcov in coverage/
+npm run coverage:clean
+```
+Add a test:
+```ts
+import assert from 'node:assert';
+import { computePillarDeltas } from '../lib/diff';
+assert.deepStrictEqual(/* ... */);
+```
+
+## 10. Deployment Notes
+1. Replace user agent token in `fetch-html.ts` if branding.
+2. Single-instance cache & rate limiting; externalize for multi-region.
+3. Tune weighting & baseline constants in `compute-scores.ts`.
+4. CSP & security headers set in `middleware.ts` – adjust if adding external assets.
+5. Mixed content detection is static (HTML only, no JS exec).
+6. Memory pressure: set `NODE_OPTIONS=--max_old_space_size=512` as needed.
+7. Replace `app/icon.svg` for custom branding.
+
+## 11. Roadmap
+- External resource weight HEAD probes
+- Optional headless render phase
+- Historical trend storage + auth
+- Expanded security heuristics (HSTS, SRI, cookie flags)
+- Smarter remediation grouping & hints
+- Optional Lighthouse hybrid mode
+
+## 12. Troubleshooting
 | Symptom | Likely Cause | Suggested Fix |
 |---------|--------------|---------------|
-| Security score surprisingly low | Missing common security headers | Add CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy |
-| `NON_HTML` error | Target responded with non-HTML (PDF/image/binary) | Use a standard HTML page URL |
-| `TIMEOUT` | Slow origin or blocked by anti-bot | Retry; verify manual curl speed; reduce payload |
-| `HTTP_ERROR 404` | Page missing / requires auth | Provide a publicly accessible URL |
-| Mixed content flagged | HTTP resources embedded on HTTPS page | Upgrade resource URLs to HTTPS |
+| Security score low | Missing headers | Add CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy |
+| NON_HTML error | Non-HTML response | Provide a standard HTML URL |
+| TIMEOUT | Slow origin / blocked | Retry, verify via curl, reduce payload |
+| HTTP_ERROR 404 | Page missing | Use a public, accessible URL |
+| Mixed content flagged | HTTP assets on HTTPS page | Upgrade resource URLs |
 
-## 🤝 Contributing
-Lightweight for now—feel free to open an issue or PR. Keep tests minimal and direct.
+## 13. Contributing
+Contributions welcome – keep PRs focused and add/adjust a test when changing logic.
 
 Guidelines:
-* One concern per PR
-* Add / adjust a `.test.ts` file when logic changes
-* Prefer pure functions inside `lib/` for easier testing
+- One concern per PR
+- Prefer pure, deterministic functions in `lib/`
+- Maintain or improve coverage when feasible
 
-## 📄 License
-MIT License – see `LICENSE` file for full text.
+## 14. Credits
+Created by the project author. Design collaboration & inspiration: [Habbi Web Design](https://habbiwebdesign.com) – minimal dark aesthetic & interaction refinements.
+
+## 15. License
+MIT – see `LICENSE`.
 
 ---
 Questions or ideas? Open an issue or start a discussion. 🚀

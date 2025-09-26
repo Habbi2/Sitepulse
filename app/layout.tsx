@@ -17,7 +17,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="min-h-screen font-sans hb-bg transition-colors">
         <div className="min-h-screen flex flex-col">
-          {children}
+          <header className="px-6 py-4 flex items-center justify-between border-b border-neutral-900/70 bg-neutral-950/60 backdrop-blur-sm">
+            <a href="/" className="text-sm font-medium tracking-wide text-neutral-200 hover:text-white transition">SitePulse</a>
+            <nav className="flex items-center gap-6 text-xs text-neutral-400">
+              <a href="/" className="hover:text-sky-400 transition">Home</a>
+              <a href="https://habbiwebdesign.com" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition">Habbi Web Design</a>
+              <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition">GitHub</a>
+            </nav>
+          </header>
+          <div className="flex-1">
+            {children}
+          </div>
+          <footer className="mt-16 py-8 text-center text-[11px] text-neutral-600">
+            <p>&copy; {new Date().getFullYear()} SitePulse. Design inspiration: <a className="hover:text-sky-400 transition" href="https://habbiwebdesign.com" target="_blank" rel="noopener noreferrer">Habbi Web Design</a>.</p>
+          </footer>
         </div>
       </body>
     </html>
