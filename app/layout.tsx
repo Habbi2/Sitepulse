@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </div>
           <footer className="mt-16 py-8 text-center text-[11px] text-neutral-600">
-            <p>&copy; {new Date().getFullYear()} SitePulse. Design inspiration: <a className="hover:text-sky-400 transition" href="https://habbiwebdesign.com" target="_blank" rel="noopener noreferrer">Habbi Web Design</a>.</p>
+            <p>&copy; {new Date().getFullYear()} SitePulse. Design inspiration: <a className="hover:text-sky-400 transition" href="https://habbiwebdesign.site" target="_blank" rel="noopener noreferrer">Habbi Web Design</a>.</p>
           </footer>
         </div>
       </body>
