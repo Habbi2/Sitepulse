@@ -21,8 +21,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="/" className="text-sm font-medium tracking-wide text-neutral-200 hover:text-white transition">SitePulse</a>
             <nav className="flex items-center gap-6 text-xs text-neutral-400">
               <a href="/" className="hover:text-sky-400 transition">Home</a>
-              <a href="https://habbiwebdesign.com" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition">Habbi Web Design</a>
-              <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition">GitHub</a>
+              <a href="https://habbiwebdesign.site" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition">Habbi Web Design</a>
+              <a href="https://github.com/Habbi2/Sitepulse" target="_blank" rel="noopener noreferrer" className="hover:text-sky-400 transition">GitHub</a>
             </nav>
           </header>
           <div className="flex-1">
