@@ -1,11 +1,14 @@
 <div align="center">
-
-# SitePulse
-
-Fast, explainable multi‑pillar website quality snapshots (Performance • Accessibility • SEO • Security • UX) in a single request.
-
-![Score Gauge](./app/icon.svg)
-
+  <img src="app/icon.svg" width="96" alt="SitePulse" />
+  
+  <h1>SitePulse</h1>
+  <p><strong>Fast, explainable multi‑pillar website quality snapshots</strong><br/>Performance • Accessibility • SEO • Security • UX</p>
+  
+  <p>
+    <img src="https://img.shields.io/github/stars/Habbi2/Sitepulse?style=flat-square" alt="Stars" />
+    <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License" />
+    <img src="https://img.shields.io/badge/status-early-green?style=flat-square" alt="Status" />
+  </p>
 </div>
 
 ## Table of Contents
@@ -26,10 +29,14 @@ Fast, explainable multi‑pillar website quality snapshots (Performance • Acce
 15. License
 
 ## 1. Overview
-SitePulse produces a concise, weighted score profile across five pillars and surfaces only the issues that actually influenced the numbers—making every deduction explainable. All logic executes server‑side against the raw HTML (fast mode). No persistence beyond a short in‑memory TTL cache.
+SitePulse produces a concise, weighted multi‑pillar score profile and only lists issues that actually impacted the numbers—every deduction is explainable. Logic executes server‑side directly on raw HTML (fast mode). No DB; ephemeral in‑memory cache.
 
 ## 2. Why Another Auditor?
-Traditional tools are either: (a) heavyweight & slow (headless browsers, multi‑pass), or (b) simplistic lists without context. SitePulse focuses on: instantaneous feedback (< ~1s typical), transparent scoring inputs, diff‑friendly output, and a minimal, dark, accessible UI with subtle heartbeat animations (disabled for reduced‑motion users).
+Many tools are (a) heavyweight & slow (multi‑pass headless) or (b) shallow lists without weighting context. SitePulse optimizes for:
+1. Near‑instant feedback (<~1s typical)
+2. Transparent scoring inputs & weights
+3. Diff‑friendly JSON for CI / regression tracking
+4. Minimal accessible UI (dark by default, respects reduced‑motion)
 
 ## 3. Feature Matrix (MVP)
 Core:
@@ -197,6 +204,9 @@ Created by the project author. Design collaboration & inspiration: [Habbi Web De
 
 ## 15. License
 MIT – see `LICENSE`.
+
+## Social / Preview Assets
+Planned OG image: pillar score gauges left + issues delta diff right. Provide `/public/og.png` or dynamic route.
 
 ---
 Questions or ideas? Open an issue or start a discussion. 🚀
